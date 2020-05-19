@@ -15,7 +15,7 @@ variables:
 
 
 .common: &common
-  image: quay.io/redhat-aqe/atacac:latest
+  image: europ/atacac:latest
   tags:
     - upshift
 

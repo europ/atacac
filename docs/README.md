@@ -73,9 +73,9 @@
     * Key `TOWER_PASSWORD` with `abcd1234` value
     * Key `TOWER_VERIFY_SSL` with `false` value
 1. Add assets (YAML files) to the repository (folder, eg. `data/assets/`)
-    * You can download the already existing ones with `podman run --rm -v $PWD:/workdir:Z quay.io/redhat-aqe/atacac backup <LABEL_ID> /workdir/data/assets`
+    * You can download the already existing ones with `podman run --rm -v $PWD:/workdir:Z europ/atacac backup <LABEL_ID> /workdir/data/assets`
 1. Configure the validation scheme stored in `data/schemas/`
-    * You can check asset validating schema locally via `podman run --rm -v $PWD:/workdir:Z -e ASSETS_GLOB="/workdir/data/assets/*.yml" -e ASSETS_SCHEMA=/workdir/<schema-path> quay.io/redhat-aqe/atacac validate`
+    * You can check asset validating schema locally via `podman run --rm -v $PWD:/workdir:Z -e ASSETS_GLOB="/workdir/data/assets/*.yml" -e ASSETS_SCHEMA=/workdir/<schema-path> europ/atacac validate`
 1. Rename `.TEMPLATE.gitlab-ci.yml` to `.gitlab-ci.yml`
 1. Fill in placeholders in `.gitlab-ci.yml`, they are marked with `<TODO>`
     * Find the placeholder(s) via `grep -nF '<TODO>' .gitlab-ci.yml` and replace them
@@ -119,14 +119,14 @@ How to create derived repository;
 ### Usage
 
 ```sh
-docker run --rm -v "$PWD:/workdir:Z" quay.io/redhat-aqe/atacac <command> <args...>
+docker run --rm -v "$PWD:/workdir:Z" europ/atacac <command> <args...>
 ```
 
 Or start interactive shell in the container and launch commands via `atacac`
 wrapper (eg. `atacac backup` to run `backup` command);
 
 ```sh
-docker run --rm -v "$PWD:/workdir:Z" --entrypoint /bin/bash -it quay.io/redhat-aqe/atacac
+docker run --rm -v "$PWD:/workdir:Z" --entrypoint /bin/bash -it europ/atacac
 ```
 
 #### Scripts
