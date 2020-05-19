@@ -1,0 +1,32 @@
+---
+include:
+  - project: 'rad/project-template'
+    ref: master
+    file: '/templates/images.yml'
+
+stages:
+  - linting
+
+.common: &common
+  tags:
+    - upshift
+  extends:
+    - .tox-image
+
+pycodestyle:
+  <<: *common
+  stage: linting
+  script:
+    - tox -e pylint
+
+flake8:
+  <<: *common
+  stage: linting
+  script:
+    - tox -e flake8
+
+mypy:
+  <<: *common
+  stage: linting
+  script:
+    - tox -e mypy

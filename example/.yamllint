@@ -1,0 +1,9 @@
+extends: default
+
+rules:
+  document-start: disable
+  line-length:
+    max: 160 # ansible-lint
+    level: warning
+  comments:
+    min-spaces-from-content: 1

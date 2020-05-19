@@ -1,0 +1,44 @@
+---
+dist: bionic
+
+matrix:
+  include:
+    - name: yamllint
+      language: python
+      python: "3.8"
+      before_install:
+        - pip install yamllint
+      script:
+        - yamllint --config-file ./example/.yamllint .
+
+    - name: pycodestyle
+      language: python
+      python: 3.8
+      before_install:
+        - pip install --upgrade --force-reinstall pycodestyle
+      script:
+        - pycodestyle --config=./tox.ini .
+
+    - name: flake8
+      language: python
+      python: 3.8
+      before_install:
+        - pip install --upgrade --force-reinstall flake8
+      script:
+        - flake8 --config=./tox.ini .
+
+    - name: mypy
+      language: python
+      python: 3.8
+      before_install:
+        - pip install --upgrade --force-reinstall mypy
+      script:
+        - mypy --ignore-missing-imports .
+
+    - name: markdownlint
+      language: ruby
+      rvm: ruby-head
+      before_install:
+        - gem install mdl
+      script:
+        - mdl --style markdownlint.rb .

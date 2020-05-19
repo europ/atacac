@@ -1,0 +1,13 @@
+# python
+__pycache__/
+.mypy_cache/
+.tox/
+*.egg-info
+
+# virtualenv
+venv/
+env/
+
+# tmp
+artifacts.zip
+artifacts/

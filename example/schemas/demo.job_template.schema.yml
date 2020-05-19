@@ -1,0 +1,37 @@
+---
+# validation schema for job template
+
+include('asset')
+
+---
+asset:
+  allow_simultaneous: bool()
+  asset_relation:
+    credentials: list(str())
+    labels: list(include('label'))
+    notification_templates_error: list(min=0, max=0)
+    notification_templates_success: list(min=0, max=0)
+    roles: list(include('role'))
+    schedules: list(min=0, max=0)
+    survey_spec: dict()
+  asset_type: str()
+  credential: str(required=False)
+  custom_virtualenv: str(required=False)
+  description: str(required=False)
+  extra_vars: str()
+  inventory: str()
+  name: str()
+  playbook: str()
+  project: str()
+  vault_credential: str(required=False)
+
+---
+role:
+  name: enum('Read', 'Update', 'Use', 'Admin', 'Execute')
+  team: list(str())
+  user: list(str())
+
+---
+label:
+  name: str()
+  organization: str()

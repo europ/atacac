@@ -1,0 +1,30 @@
+# https://sequencediagram.org/
+# add this file content to the page above
+
+# RESTORE BACKUP
+
+participant Developer
+participant Repository
+participant Ansible Tower
+
+Developer->(1)Repository:change request
+
+note over Repository:pipeline is triggered
+
+Repository<->Ansible Tower:requests / responses
+
+note over Repository:pipeline finished
+
+Repository-->(1)Developer:OK
+
+note over Developer:developer did a mistake
+
+Developer->(1)Repository:get artifacts request
+
+Repository-->(1)Developer:artifacts (archive)
+
+Developer->Developer:extract
+
+Developer->(1)Ansible Tower: restore assets
+
+Ansible Tower-->(1)Developer:OK

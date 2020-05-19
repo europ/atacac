@@ -1,0 +1,37 @@
+# https://sequencediagram.org/
+# add this file content to the page above
+
+# CHANGE REQUEST
+
+participant Developer
+participant Repository
+participant Ansible Tower
+
+Developer->(1)Repository:change request
+
+note over Repository:pipeline is triggered
+
+Repository->(0)Repository:linting
+Repository->(0)Repository:validating
+
+Repository->(1)Ansible Tower:assets export request
+Ansible Tower-->(1)Repository:assets (yaml files)
+
+Repository->(0)Repository:differentiating
+
+Repository->(1)Ansible Tower:list all assets with specific label request
+Ansible Tower-->(1)Repository:asset list (array of strings)
+
+Repository->(0)Repository:synchronizing
+
+Repository->(1)Ansible Tower:assets export request
+Ansible Tower-->(1)Repository:assets (yaml files)
+
+note over Repository:assets are saved to artifacts
+
+Repository->(1)Ansible Tower: (re)write assets
+Ansible Tower-->(1)Repository:OK
+
+note over Repository:pipeline finished
+
+Repository-->(1)Developer:OK

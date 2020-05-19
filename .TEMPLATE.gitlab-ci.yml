@@ -1,0 +1,58 @@
+stages:
+  - validating
+  - differentiating
+  - synchronizing
+  - backup
+  - uploading
+
+variables:
+  LABEL_ID: <TODO>        # ID of label in Tower, use `tower-cli label list -a`
+  ASSETS_GLOB: <TODO>     # shell glob that will match all assets files
+  ASSETS_SCHEMA: <TODO>   # OPTIONAL yamale schema to check assets
+
+  BACKUP_PATH: &backup_path backup    # path to backup
+  ARTIFACTS_JOB: &backup_job backup   # name of backup job in gitlab-ci
+
+
+.common: &common
+  image: quay.io/redhat-aqe/atacac:latest
+  tags:
+    - upshift
+
+validation:
+  <<: *common
+  stage: validating
+  script:
+    - atacac validate
+
+differentiation:
+  <<: *common
+  stage: differentiating
+  script:
+    - atacac differentiate
+  allow_failure: true
+
+synchronization:
+  <<: *common
+  stage: synchronizing
+  script:
+    - atacac synchronize
+
+*backup_job:
+  <<: *common
+  stage: backup
+  only:
+    - master
+  script:
+    - atacac backup
+  artifacts:
+    paths:
+      - *backup_path
+
+upload:
+  <<: *common
+  stage: uploading
+  only:
+    - master
+  script:
+    - atacac upload
