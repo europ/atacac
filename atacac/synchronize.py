@@ -1,9 +1,8 @@
-import os
 import glob
 
 import click
 
-from atacac._utils import log, tower_list
+from atacac._utils import log, tower_list, load_asset
 
 
 @click.command()
@@ -11,10 +10,15 @@ from atacac._utils import log, tower_list
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
 def main(label_id, assets_glob):
     # asset names in repository
-    local_assets = [
-        os.path.splitext(os.path.basename(file_name))[0].replace('_', ' ')
-        for file_name in glob.glob(assets_glob, recursive=True)
-    ]
+    local_assets = []
+    for file_name in glob.glob(assets_glob, recursive=True):
+        asset = load_asset(file_name)
+        # Can synchronize only assets of type job_template because we are
+        # getting assets from tower by label. Label is not available on projects
+        # or inventories.
+        if asset['asset_type'] != 'job_template':
+            continue
+        local_assets.append(asset['name'])
 
     # asset names in tower
     tower_assets = [

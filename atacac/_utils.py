@@ -13,6 +13,7 @@ import tower_cli
 from tower_cli.cli.transfer.send import Sender
 from tower_cli.cli.transfer.receive import Receiver
 from tower_cli.cli.transfer.common import SEND_ORDER as ASSET_TYPES
+import yaml
 
 
 LOG_COLORS = {
@@ -106,3 +107,13 @@ def tower_send(asset):
 
     sender = Sender(False)
     sender.send(source, None, None, 'default')
+
+
+def load_asset(file_path):
+    """
+    Load asset file to dict.
+
+    Now simply opens file and parses YAML.
+    """
+    with open(file_path) as f:
+        return yaml.safe_load(f)

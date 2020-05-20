@@ -1,13 +1,11 @@
-import os
 import json
 import glob
 
-import yaml
 import dictdiffer
 import click
 from tower_cli.exceptions import TowerCLIError
 
-from atacac._utils import log, tower_receive
+from atacac._utils import log, tower_receive, load_asset
 
 
 @click.command()
@@ -16,24 +14,21 @@ def main(assets_glob):
     diff = False
 
     for file_name in glob.glob(assets_glob, recursive=True):
+        asset = load_asset(file_name)
+
         try:
-            jt_name = os.path.splitext(file_name)[0].replace('_', ' ')
-            jt_data = tower_receive('job_template', jt_name)[0]
+            jt_data = tower_receive(asset['asset_type'], asset['name'])[0]
         except TowerCLIError:
-            log('INFO', (f"Asset '{jt_name}' doesn't exist in Tower, no need "
-                         "to check for diffs"))
+            log('INFO', (f"Asset '{asset['name']}' doesn't exist in Tower, no "
+                         "need to check for diffs"))
             continue
 
-        jt_file_src = file_name
-        jt_file_src_data = yaml.load(open(jt_file_src), Loader=yaml.FullLoader)
-
-        log('INFO', f"Differentiating '{jt_file_src}' and '{jt_name}'")
-
-        differences = list(dictdiffer.diff(jt_data, jt_file_src_data))
+        log('INFO', f"Differentiating '{file_name}' and '{asset['name']}'")
+        differences = list(dictdiffer.diff(jt_data, asset))
         if differences != []:
             diff = True
-            log('WARNING', (f"  Mismatch, '{jt_file_src}' is not the same as "
-                            f"the '{jt_name}' in tower!"))
+            log('WARNING', (f"  Mismatch, '{file_name}' is not the same as "
+                            f"the '{asset['name']}' in tower!"))
             log('INFO', "  Difference:")
             for diff in differences:
                 for line in json.dumps(diff, indent=2).splitlines():
