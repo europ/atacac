@@ -1,3 +1,7 @@
+[![Travis CI Build Status](https://img.shields.io/travis/com/europ/atacac/master?label=Travis%20CI&logo=travis)](https://travis-ci.com/europ/atacac)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/europ/atacac.svg?label=Docker%20Build&logo=docker)](https://hub.docker.com/r/europ/atacac/builds)
+[![License](https://img.shields.io/github/license/europ/atacac?label=License)](https://github.com/europ/atacac/blob/master/LICENSE)
+
 # ATACAC - Ansible Tower Asset Config As Code
 
 ### Preface
