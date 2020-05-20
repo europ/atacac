@@ -4,6 +4,7 @@ import glob
 import dictdiffer
 import click
 from tower_cli.exceptions import TowerCLIError
+import yaml
 
 from atacac._utils import log, tower_receive, load_asset
 
@@ -22,6 +23,11 @@ def main(assets_glob):
             log('INFO', (f"Asset '{asset['name']}' doesn't exist in Tower, no "
                          "need to check for diffs"))
             continue
+
+        # Need to parse extra vars to dict becuse in assets file it is YAML and
+        # in reponse from tower it is JSON.
+        asset['extra_vars'] = yaml.safe_load(asset['extra_vars'])
+        jt_data['extra_vars'] = yaml.safe_load(jt_data['extra_vars'])
 
         log('INFO', f"Differentiating '{file_name}' and '{asset['name']}'")
         differences = list(dictdiffer.diff(jt_data, asset))
