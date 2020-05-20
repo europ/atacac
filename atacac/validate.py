@@ -18,7 +18,7 @@ def main(assets_glob, assets_schema, custom_validators):
         schema = yamale.make_schema(assets_schema,
                                     validators=validators.load(custom_validators))
 
-        for f in glob.glob(assets_glob, recursive=True):
+        for f in sorted(glob.glob(assets_glob, recursive=True)):
             log('INFO', f"Validating {f} against schema {assets_schema}")
             yamale.validate(schema, yamale.make_data(f))
 

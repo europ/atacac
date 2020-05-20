@@ -13,7 +13,7 @@ from atacac._utils import log, tower_receive, load_asset
 def main(assets_glob):
     diff = False
 
-    for file_name in glob.glob(assets_glob, recursive=True):
+    for file_name in sorted(glob.glob(assets_glob, recursive=True)):
         asset = load_asset(file_name)
 
         try:

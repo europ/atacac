@@ -11,7 +11,7 @@ from atacac._utils import log, tower_list, load_asset
 def main(label_id, assets_glob):
     # asset names in repository
     local_assets = []
-    for file_name in glob.glob(assets_glob, recursive=True):
+    for file_name in sorted(glob.glob(assets_glob, recursive=True)):
         asset = load_asset(file_name)
         # Can synchronize only assets of type job_template because we are
         # getting assets from tower by label. Label is not available on projects
