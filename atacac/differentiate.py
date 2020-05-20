@@ -30,9 +30,8 @@ def main(assets_glob):
             log('WARNING', (f"  Mismatch, '{file_name}' is not the same as "
                             f"the '{asset['name']}' in tower!"))
             log('INFO', "  Difference:")
-            for diff in differences:
-                for line in json.dumps(diff, indent=2).splitlines():
-                    log('INFO', f"    {line}")
+            for d in differences:
+                log('INFO', "    " + json.dumps(d, indent=2))
 
     if diff:
         log('ERROR', "Difference(s) found!", fatal=True)

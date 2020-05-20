@@ -21,9 +21,8 @@ def main(label_id, destination):
         log('ERROR', f"Directory path: {destination}")
         log('ERROR', "Failed to create directory!", fatal=True)
 
-    job_templates_3SN = tower_list('job_template', [('labels', label_id)])
-
-    for jt in job_templates_3SN:
+    job_templates = tower_list('job_template', [('labels', label_id)])
+    for jt in job_templates:
         jt_name = jt['name']
         log('INFO', f"Downloading '{jt_name}' ...")
         jt_file = os.path.join(destination, jt_name.replace(' ', '_') + '.yml')
