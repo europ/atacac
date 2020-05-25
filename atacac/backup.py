@@ -1,9 +1,10 @@
 import os
-
 import yaml
+import glob
 import click
 
-from atacac._utils import log, tower_list, tower_receive
+from atacac._utils import log, load_asset, tower_receive
+from tower_cli.exceptions import TowerCLIError
 
 
 class Dumper(yaml.Dumper):
@@ -12,28 +13,37 @@ class Dumper(yaml.Dumper):
 
 
 @click.command()
-@click.argument('label_id', envvar='LABEL_ID')
 @click.argument('destination', envvar='BACKUP_PATH')
-def main(label_id, destination):
+@click.argument('assets_glob', envvar='ASSETS_GLOB')
+def main(label_id, destination, assets_glob):
     try:
         os.makedirs(destination, exist_ok=True)
     except OSError:
         log('ERROR', f"Directory path: {destination}")
         log('ERROR', "Failed to create directory!", fatal=True)
 
-    job_templates = tower_list('job_template', [('labels', label_id)])
-    for jt in job_templates:
-        jt_name = jt['name']
-        log('INFO', f"Downloading '{jt_name}' ...")
-        jt_file = os.path.join(destination, jt_name.replace(' ', '_') + '.yml')
-        jt_data = tower_receive('job_template', jt_name)[0]
-        content = yaml.dump(jt_data, Dumper=Dumper, default_flow_style=False)
+    for file_name in sorted(glob.glob(assets_glob, recursive=True)):
+        asset = load_asset(file_name)
 
         try:
-            log('INFO', f"    File path: {jt_file}")
-            with open(jt_file, 'w') as file:
+            log('INFO', f"Downloading '{asset['name']}' ...")
+            asset_data = tower_receive(asset['asset_type'], asset['name'])[0]
+        except TowerCLIError:
+            log('INFO', (f"... asset '{asset['name']}' does not exist in Tower"))
+            continue
+
+        file_path = os.path.join(
+            destination,
+            asset_data['name'].replace('/', '-').replace(' ', '_') + '.yml'
+        )
+
+        file_content = yaml.dump(asset_data, Dumper=Dumper, default_flow_style=False)
+
+        try:
+            log('INFO', f"    File path: {file_path}")
+            with open(file_path, 'w') as file:
                 file.write("---\n")
-                file.write(content)
+                file.write(file_content)
         except EnvironmentError:
             log('ERROR', "Failed to write to the file!", fatal=True)
 
