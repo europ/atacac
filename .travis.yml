@@ -1,9 +1,10 @@
 ---
-dist: bionic
+dist: bionic # 18.04
+language: minimal
 
 matrix:
   include:
-    - name: yamllint
+    - name: Linter-YAML (yamllint)
       language: python
       python: "3.8"
       before_install:
@@ -11,7 +12,7 @@ matrix:
       script:
         - yamllint --config-file ./example/.yamllint .
 
-    - name: pycodestyle
+    - name: Linter-Python (pycodestyle)
       language: python
       python: 3.8
       before_install:
@@ -19,7 +20,7 @@ matrix:
       script:
         - pycodestyle --config=./tox.ini .
 
-    - name: flake8
+    - name: Linter-Python (flake8)
       language: python
       python: 3.8
       before_install:
@@ -27,7 +28,7 @@ matrix:
       script:
         - flake8 --config=./tox.ini .
 
-    - name: mypy
+    - name: Linter-Python (mypy)
       language: python
       python: 3.8
       before_install:
@@ -35,10 +36,19 @@ matrix:
       script:
         - mypy --ignore-missing-imports .
 
-    - name: markdownlint
+    - name: Linter-Markdown (markdownlint)
       language: ruby
       rvm: ruby-head
       before_install:
         - gem install mdl
       script:
         - mdl --style markdownlint.rb .
+
+    - name: Linter-Dockerfile (hadolint)
+      language: minimal
+      services:
+        - docker
+      before_install:
+        - docker pull hadolint/hadolint
+      script:
+        - docker run --rm -i hadolint/hadolint < Dockerfile
