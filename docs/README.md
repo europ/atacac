@@ -5,8 +5,8 @@
 1. [Setup](#setup)
     1. [Prerequisites](#prerequisites)
     1. [Configuration](#configuration)
-        1. [Remote](#remote)
         1. [Local](#local)
+        1. [Remote](#remote)
         1. [Fork and Customize](#fork-and-customize)
     1. [Usage](#usage)
         1. [Scripts](#scripts)
@@ -35,53 +35,21 @@
 ### Prerequisites
 
 1. GitLab environment
-    1. Domain
-        * e.g. `https://your.gitlab.domain.com/`
-    1. Repository
-        * e.g. `owner/repository`
+    1. Domain (e.g. `https://your.gitlab.domain.com/`)
+    1. Repository (e.g. `owner/repository`)
     1. Account
-        * has all the necessary permissions to the repository
-        * personal access token, e.g. `efgh5678`
-            * `api` scope
+        * has all the necessary permissions to the repository (`api` scope)
+        * personal access token (e.g. `efgh5678`)
+    1. GitLab runner
 1. Ansible Tower
     1. Ansible Tower server
-        * URL of the host, e.g. `https://your.tower.domain.com/`
+        * URL of the host (e.g. `https://your.tower.domain.com/`)
     1. Ansible Tower account with sufficient permissions for read and modify
-        * username, e.g. `towerbot`
-        * password, e.g. `abcd1234`
+        * username (e.g. `towerbot`) and password (e.g. `abcd1234`)
 1. [python3](https://www.python.org/)
-1. python3 [pip](https://github.com/pypa/pip)
-1. python3 packages
-    * see `requirements.txt` for package list
-    * install all via `python3 -m pip install -r requirements.txt`
+1. [podman](https://podman.io/) or [docker](https://www.docker.com/)
 
 ### Configuration
-
-#### Remote
-
-1. Create new project
-    1. create new project GitLab as you are used to do
-    1. download `.TEMPLATE.gitlab-ci.yml` and add it to your project
-1. Go to your project repository
-1. Enable GitLab runner for the project
-    1. Open `CI/CD` settings
-    1. Expand `Runners` section
-    1. Add specific runners or use shared runners
-1. Add environment variables to the project
-    * Key `TOWER_HOST` with `https://your.tower.domain.com/` value
-    * Key `TOWER_USERNAME` with `towerbot` value
-    * Key `TOWER_PASSWORD` with `abcd1234` value
-    * Key `TOWER_VERIFY_SSL` with `false` value
-1. Add assets (YAML files) to the repository (folder, eg. `data/assets/`)
-    * You can download the already existing ones with `podman run --rm -v $PWD:/workdir:Z europ/atacac backup <LABEL_ID> /workdir/data/assets`
-1. Configure the validation scheme stored in `data/schemas/`
-    * You can check asset validating schema locally via `podman run --rm -v $PWD:/workdir:Z -e ASSETS_GLOB="/workdir/data/assets/*.yml" -e ASSETS_SCHEMA=/workdir/<schema-path> europ/atacac validate`
-1. Rename `.TEMPLATE.gitlab-ci.yml` to `.gitlab-ci.yml`
-1. Fill in placeholders in `.gitlab-ci.yml`, they are marked with `<TODO>`
-    * Find the placeholder(s) via `grep -nF '<TODO>' .gitlab-ci.yml` and replace them
-    * To find the corresponding ID to the label run `tower-cli label list -a`
-1. Rename `TEMPLATE.README.md` to `README.md`
-    * Add valid values to the placeholders
 
 #### Local
 
@@ -94,11 +62,33 @@
     * `GITLAB_URL` with `https://your.gitlab.domain.com/`
     * `GITLAB_TOKEN` with `efgh5678`
     * `GITLAB_PROJECT` with `owner/repository`
-1. Verify your local repository settings by running `tox` (or `tox --recreate`)
-    * differentiate may fail on found differences
-    * synchronize will fail because the `Label ID` is passed via pipeline (expected)
-    * backup will fail becuase the `PATH_BACKUP` environment variable is set via pipeline
-        * to fix it run `export PATH_BACKUP=/tmp/backup`
+
+#### Remote
+
+1. Create new GitLab project
+1. Go to your project repository
+1. Enable GitLab runner for the project
+    1. Open `CI/CD` settings
+    1. Expand `Runners` section
+    1. Add specific runners or use shared runners
+1. Add environment variables to the project
+    * Key `TOWER_HOST` with `https://your.tower.domain.com/` value
+    * Key `TOWER_USERNAME` with `towerbot` value
+    * Key `TOWER_PASSWORD` with `abcd1234` value
+    * Key `TOWER_VERIFY_SSL` with `false` value
+1. Add assets (YAML files) to the repository folder `./assets/`
+    * You can download the already existing ones with `podman run --rm -v $PWD:/workdir:Z europ/atacac backup <LABEL_ID> /assets`
+        * To find the corresponding label ID run `tower-cli label list -a` (requires local setup)
+1. Add schemas (assets validators) to the repository folder `./schemas/`
+    * Configure the validation scheme(s)
+    * You can check assets validating schema locally via `podman run --rm -v $PWD:/workdir:Z -e ASSETS_GLOB="/workdir/data/assets/*.yml" -e ASSETS_SCHEMA=/workdir/<schema-path> europ/atacac validate`
+1. Add GitLab CI configuration file
+    * You can use the template file `.TEMPLATE.gitlab-ci.yml`
+        * Add valid values to the placeholders `<TODO>` by label ID
+        * To find the corresponding label ID run `tower-cli label list -a` (requires local setup)
+1. Add repository readme file
+    * You can use the template file `.TEMPLATE.README.md`
+        * Add valid values to the placeholders `{PLACEHOLDER.*}`
 
 #### Fork and Customize
 
