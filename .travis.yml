@@ -51,4 +51,6 @@ matrix:
       before_install:
         - docker pull hadolint/hadolint
       script:
-        - docker run --rm -i hadolint/hadolint < Dockerfile
+        - >
+          docker run --rm -i -v ${PWD}/.hadolint.yaml:/conf/hadolint.yaml:Z
+          -e XDG_CONFIG_HOME=/conf hadolint/hadolint < Dockerfile
