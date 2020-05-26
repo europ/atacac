@@ -1,12 +1,12 @@
 ---
-dist: bionic # 18.04
+dist: bionic # Ubuntu 18.04
 language: minimal
 
 matrix:
   include:
     - name: Linter-YAML (yamllint)
       language: python
-      python: "3.8"
+      python: 3.8
       before_install:
         - pip install yamllint
       script:
@@ -38,7 +38,7 @@ matrix:
 
     - name: Linter-Markdown (markdownlint)
       language: ruby
-      rvm: ruby-head
+      rvm: 2.7.1
       before_install:
         - gem install mdl
       script:
