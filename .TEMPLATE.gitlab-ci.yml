@@ -31,12 +31,16 @@ differentiation:
   script:
     - atacac differentiate
   allow_failure: true
+  needs:
+    - validation
 
 synchronization:
   <<: *common
   stage: synchronizing
   script:
     - atacac synchronize
+  needs:
+    - validation
 
 *backup_job:
   <<: *common
@@ -48,6 +52,8 @@ synchronization:
   artifacts:
     paths:
       - *backup_path
+  needs:
+    - validation
 
 upload:
   <<: *common
@@ -56,3 +62,7 @@ upload:
     - master
   script:
     - atacac upload
+  needs:
+    - differentiation
+    - synchronization
+    - *backup_job
