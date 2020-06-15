@@ -29,4 +29,4 @@ The documentation including setup description can be found in [`docs/README.md`]
 
 ### Contribution
 
-Feel free to open an [issue](https://github.com/europ/atacac/issues) or a [change request](https://github.com/europ/atacac/pulls) in this repository in case of a bug, problem, request for enhancement, feature idea, suggestion, etc.
+Feel free to open an [issue](https://github.com/europ/atacac/issues) or a [change request](https://github.com/europ/atacac/pulls) in this repository in case of a bug, problem, request for enhancement, feature idea, suggestion, etc. If you wish to create a change request, please make sure that `tox` command will pass successfully.
