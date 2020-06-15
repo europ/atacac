@@ -1,10 +1,11 @@
 import os
-import yaml
 import glob
+
+import yaml
 import click
+from tower_cli.exceptions import TowerCLIError
 
 from atacac._utils import log, load_asset, tower_receive
-from tower_cli.exceptions import TowerCLIError
 
 
 class Dumper(yaml.Dumper):

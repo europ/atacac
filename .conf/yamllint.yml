@@ -1,0 +1,12 @@
+---
+extends: default
+
+rules:
+  document-start: disable
+  line-length:
+    max: 100
+  comments:
+    min-spaces-from-content: 1
+
+ignore: |
+  .tox/

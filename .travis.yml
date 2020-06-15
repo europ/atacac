@@ -4,46 +4,6 @@ language: minimal
 
 matrix:
   include:
-    - name: Linter-YAML (yamllint)
-      language: python
-      python: 3.8
-      before_install:
-        - pip install yamllint
-      script:
-        - yamllint --config-file ./example/.yamllint .
-
-    - name: Linter-Python (pycodestyle)
-      language: python
-      python: 3.8
-      before_install:
-        - pip install --upgrade --force-reinstall pycodestyle
-      script:
-        - pycodestyle --config=./tox.ini .
-
-    - name: Linter-Python (flake8)
-      language: python
-      python: 3.8
-      before_install:
-        - pip install --upgrade --force-reinstall flake8
-      script:
-        - flake8 --config=./tox.ini .
-
-    - name: Linter-Python (mypy)
-      language: python
-      python: 3.8
-      before_install:
-        - pip install --upgrade --force-reinstall mypy
-      script:
-        - mypy --ignore-missing-imports .
-
-    - name: Linter-Markdown (markdownlint)
-      language: ruby
-      rvm: 2.7.1
-      before_install:
-        - gem install mdl
-      script:
-        - mdl --style markdownlint.rb .
-
     - name: Linter-Dockerfile (hadolint)
       language: minimal
       services:
@@ -52,5 +12,31 @@ matrix:
         - docker pull hadolint/hadolint
       script:
         - >
-          docker run --rm -i -v ${PWD}/.hadolint.yaml:/conf/hadolint.yaml:Z
-          -e XDG_CONFIG_HOME=/conf hadolint/hadolint < Dockerfile
+          docker run --rm -i
+          -v ${PWD}/.conf/hadolint.yaml:/conf/hadolint.yaml:Z
+          -e XDG_CONFIG_HOME=/conf hadolint/hadolint
+          < Dockerfile
+
+    - name: Linter-Markdown (markdownlint)
+      language: ruby
+      rvm: 2.7.1
+      before_install:
+        - gem install mdl
+      script:
+        - mdl --style ./.conf/markdownlint.rb .
+
+    - name: Linter-Python (flake8,mypy,pylint)
+      language: python
+      python: 3.8
+      before_install:
+        - pip install tox
+      script:
+        - tox -e flake8,mypy,pylint
+
+    - name: Linter-YAML (yamllint)
+      language: python
+      python: 3.8
+      before_install:
+        - pip install tox
+      script:
+        - tox -e yamllint
