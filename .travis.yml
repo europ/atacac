@@ -40,3 +40,11 @@ matrix:
         - pip install tox
       script:
         - tox -e yamllint
+
+    - name: Unit-tests (pytest)
+      language: python
+      python: 3.8
+      before_install:
+        - pip install tox
+      script:
+        - tox -e pytest

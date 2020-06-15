@@ -24,6 +24,12 @@ LOG_COLORS = {
 }
 
 
+class Error(Exception):
+    def __init__(self, message, error_code=1):
+        self.message = message
+        self.error_code = error_code
+
+
 def log(level, message, fatal=False):
     """
     Print mesage prefixed with styled log level (eg. ERROR will be red).
@@ -59,7 +65,7 @@ def tower_list(asset_type, query):
 
     """
     if asset_type not in ASSET_TYPES:
-        raise Exception('Unsupported asset type \'{}\'!'.format(asset_type))
+        raise Error('Unsupported asset type \'{}\'!'.format(asset_type))
 
     resource = tower_cli.get_resource(asset_type)
 
@@ -84,7 +90,7 @@ def tower_receive(asset_type, asset_name):
         assets objects
     """
     if asset_type not in ASSET_TYPES:
-        raise Exception('Unsupported asset type \'{}\'!'.format(asset_type))
+        raise Error('Unsupported asset type \'{}\'!'.format(asset_type))
 
     to_export = {asset_type: [asset_name]}
 
@@ -115,5 +121,8 @@ def load_asset(file_path):
 
     Now simply opens file and parses YAML.
     """
-    with open(file_path) as f:
-        return yaml.safe_load(f)
+    try:
+        with open(file_path) as f:
+            return yaml.safe_load(f)
+    except IOError:
+        raise Error("Failed to read content of '{}'".format(file_path))
