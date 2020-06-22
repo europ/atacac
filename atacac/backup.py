@@ -16,7 +16,7 @@ class Dumper(yaml.Dumper):
 @click.command()
 @click.argument('destination', envvar='BACKUP_PATH')
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
-def main(label_id, destination, assets_glob):
+def main(destination, assets_glob):
     try:
         os.makedirs(destination, exist_ok=True)
     except OSError:
