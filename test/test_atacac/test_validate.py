@@ -4,7 +4,7 @@ import textwrap
 from unittest import mock
 from test.utils import MockDir
 
-import pytest  # pylint: disable=import-error
+import pytest
 from click.testing import CliRunner
 
 from atacac import validate

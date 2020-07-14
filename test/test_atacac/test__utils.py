@@ -4,7 +4,7 @@ import textwrap
 from unittest import mock
 
 import click
-import pytest  # pylint: disable=import-error
+import pytest
 import yaml
 
 from atacac import _utils
@@ -154,38 +154,31 @@ def test_tower_send(mock_Sender, assets):
         assets if isinstance(assets, list) else [assets], None, None, "default")
 
 
-@pytest.mark.parametrize(
-    "valid",
-    [
-        pytest.param(True, id="valid file path"),
-        pytest.param(False, id="invalid file path")
-    ]
-)
-def test_load_asset(valid):
-    if valid:
-        file_data = textwrap.dedent(
-            """\
-            ---
-            key_a:
-              key_i: foo
-              key_j: 111
-            key_b:
-              key_x: bar
-              key_y: 222
-            """
-        )
+def test_load_asset_valid_path():
+    file_data = textwrap.dedent(
+        """\
+        ---
+        key_a:
+          key_i: foo
+          key_j: 111
+        key_b:
+          key_x: bar
+          key_y: 222
+        """
+    )
 
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(bytes(file_data, encoding="utf-8"))
-            tmpfile.seek(0)
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        tmpfile.write(bytes(file_data, encoding="utf-8"))
+        tmpfile.seek(0)
 
-            result = _utils.load_asset(tmpfile.name)
+        result = _utils.load_asset(tmpfile.name)
 
-            assert result == yaml.safe_load(file_data)
+        assert result == yaml.safe_load(file_data)
 
-    else:
-        try:
-            _utils.load_asset("./a/b/c/d/e/f/g/h/i/file")
-        except _utils.Error as e:
-            assert re.match("^Failed to read content of './a/b/c/d/e/f/g/h/i/file'$", str(e))
-            assert e.error_code == 1
+
+def test_load_asset_invalid_path():
+    try:
+        _utils.load_asset("./a/b/c/d/e/f/g/h/i/file")
+    except _utils.Error as e:
+        assert re.match(r"^Failed to read content of '\./a/b/c/d/e/f/g/h/i/file'$", str(e))
+        assert e.error_code == 1

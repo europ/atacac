@@ -4,7 +4,7 @@ import tempfile
 from unittest import mock
 from test.utils import MockDir
 
-import pytest  # pylint: disable=import-error
+import pytest
 from click import Abort
 from click.testing import CliRunner
 
@@ -71,8 +71,20 @@ def test_main(mock_gitlab_download, mock_extract, mock_upload, mock_os, ARTIFACT
         pytest.param("success", "success", "backup", "abcdefghijklm", id="artifact name != 'artifacts.zip'"),
     ]
 )
+@mock.patch("atacac.restore.log")
 @mock.patch("atacac.restore.gitlab")
-def test_gitlab_download(mock_gitlab, pipeline_status, jop_status, artifact_job, artifact_name):
+def test_gitlab_download(mock_gitlab, mock_log, pipeline_status, jop_status, artifact_job, artifact_name):
+    def log_call(*args, **kwargs):
+        try:
+            if kwargs['fatal']:
+                raise Abort
+            else:
+                pass
+        except KeyError:
+            pass
+
+    mock_log.side_effect = log_call
+
     gl = mock_gitlab.Gitlab.return_value
     project = mock.MagicMock()
     pipeline = mock.MagicMock()
@@ -119,6 +131,11 @@ def test_gitlab_download(mock_gitlab, pipeline_status, jop_status, artifact_job,
             assert (pipeline_status != "success"
                     or jop_status != "success"
                     or artifact_name != "artifacts.zip")
+        else:
+            assert mock_log.call_args_list[-1].args[1] == "Successfully downloaded"
+            assert [
+                call.args[0] for call in mock_log.call_args_list
+            ] == ["INFO", "INFO", "INFO", "WARNING", "INFO", "INFO"]
 
 
 @pytest.mark.parametrize(
@@ -173,5 +190,14 @@ def test_upload(mock_tower_send, mock_log, files):
 
     yml_files = [file for file in files if file.endswith(".yml")]
 
-    assert mock_log.call_count == len(yml_files) + 1
-    assert mock_tower_send.call_count == len(yml_files)
+    assert [
+        call.args[0] for call in mock_log.call_args_list
+    ] == [
+        "INFO" for _ in range(len(yml_files) + 1)
+    ]
+
+    assert sorted([
+        str(call.args[0]) for call in mock_tower_send.call_args_list
+    ]) == sorted([
+        os.path.join(mock_dir.path, file) for file in yml_files
+    ])

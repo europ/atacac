@@ -65,7 +65,7 @@ def tower_list(asset_type, query):
 
     """
     if asset_type not in ASSET_TYPES:
-        raise Error('Unsupported asset type \'{}\'!'.format(asset_type))
+        raise Error(f"Unsupported asset type '{asset_type}'!")
 
     resource = tower_cli.get_resource(asset_type)
 
@@ -90,7 +90,7 @@ def tower_receive(asset_type, asset_name):
         assets objects
     """
     if asset_type not in ASSET_TYPES:
-        raise Error('Unsupported asset type \'{}\'!'.format(asset_type))
+        raise Error(f"Unsupported asset type '{asset_type}'!")
 
     to_export = {asset_type: [asset_name]}
 
@@ -125,4 +125,4 @@ def load_asset(file_path):
         with open(file_path) as f:
             return yaml.safe_load(f)
     except IOError:
-        raise Error("Failed to read content of '{}'".format(file_path))
+        raise Error(f"Failed to read content of '{file_path}'")

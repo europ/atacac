@@ -3,7 +3,7 @@ import sys
 import textwrap
 from test.utils import MockDir
 
-import pytest  # pylint: disable=import-error
+import pytest
 from yamale.validators import DefaultValidators, Validator
 
 from atacac import validators
