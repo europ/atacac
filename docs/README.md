@@ -71,7 +71,10 @@
     * Key `TOWER_HOST` with `https://your.tower.domain.com/` value
     * Key `TOWER_USERNAME` with `towerbot` value
     * Key `TOWER_PASSWORD` with `abcd1234` value
-    * Key `TOWER_VERIFY_SSL` with `false` value
+    * Key `TOWER_CERTIFICATE` if you are using custom CA or self-signed
+      certificates, value should be path to certificate or you can use
+      [variable of type
+      File](https://docs.gitlab.com/ee/ci/variables/#custom-environment-variables-of-type-file)
 1. Add assets (YAML files) to the repository (folder, eg. `data/assets/`)
     * You can download the already existing ones with `podman run --rm -v $PWD:/workdir:Z europ/atacac backup <LABEL_ID> /workdir/data/assets`
 1. Configure the validation scheme stored in `data/schemas/`
@@ -87,8 +90,10 @@
 
 1. Configured Ansible Tower CLI
     * <https://tower-cli.readthedocs.io/en/latest/>
-    * add `host`, `username`, `password`, and `verify_ssl` as `false`
+    * add `host`, `username` and `password`
         * as environment variables or stored in `~/.tower_cli.cfg`
+    * set also `certificate` if you are using custom CA or self-signed
+      certificates
 1. Clone of your forked repository including the desired assets
 1. Export environment variables
     * `GITLAB_URL` with `https://your.gitlab.domain.com/`
@@ -159,8 +164,10 @@ The table below defines which environment variables are required for each comman
 * `TOWER_HOST`
 * `TOWER_USERNAME`
 * `TOWER_PASSWORD`
-* `TOWER_VERIFY_SSL`
-    * set to `false`
+* `TOWER_CERTIFICATE`
+    * Path to Tower CA certificate. Needed only when you are using internal CA
+      or self-signed certificates.
+    * *Note you can use "File" variable in GitLab; see [variables of type File](https://docs.gitlab.com/ee/ci/variables/#custom-environment-variables-of-type-file)*
 
 ##### GitLab
 
