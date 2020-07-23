@@ -12,6 +12,22 @@ from atacac._utils import log, tower_receive, load_asset
 @click.command()
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
 def main(assets_glob):
+    """
+    Get differences between assets and Tower.
+    \f
+    Differentiates the actual repository assets' attributes with actual Tower
+    assets.
+
+    This command exits with error code if there are differences between stored
+    assets and Tower.
+
+    !! ASSETS_GLOB must be in single quotes to prevent glob pattern expansion in
+    shell.
+
+    \b
+    Folloving arguments can be passed via environment variables:
+        * ASSETS_GLOB
+    """
     diff = False
 
     for file_name in sorted(glob.glob(assets_glob, recursive=True)):

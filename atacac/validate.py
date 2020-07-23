@@ -13,6 +13,19 @@ from atacac import validators
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
 @click.argument('assets_schema', envvar='ASSETS_SCHEMA', required=False)
 def main(assets_glob, assets_schema, custom_validators):
+    """
+    Validate assets files.
+    \f
+    Validates the assets with rules defined in the schema.
+
+    !! ASSETS_GLOB must be in single quotes to prevent glob pattern expansion in
+    shell.
+
+    \b
+    Folloving arguments can be passed via environment variables:
+        * ASSETS_GLOB
+        * ASSETS_SCHEMA
+    """
     # Run only if schema is set
     if assets_schema:
         schema = yamale.make_schema(assets_schema,

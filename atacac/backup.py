@@ -17,6 +17,20 @@ class Dumper(yaml.Dumper):
 @click.argument('destination', envvar='BACKUP_PATH')
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
 def main(destination, assets_glob):
+    """
+    Make backup of the Tower configuration.
+    \f
+    Download the actual Tower assets that are marked by a specific label from
+    tower to a folder.
+
+    !! ASSETS_GLOB must be in single quotes to prevent glob pattern expansion in
+    shell.
+
+    \b
+    Folloving arguments can be passed via environment variables:
+        * BACKUP_PATH
+        * ASSETS_GLOB
+    """
     try:
         os.makedirs(destination, exist_ok=True)
     except OSError:

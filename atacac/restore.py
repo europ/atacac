@@ -16,6 +16,19 @@ from atacac._utils import log, tower_send
 @click.option('--artifacts-job', envvar='ARTIFACTS_JOB', default='backup')
 @click.argument('pipeline_id')
 def main(gitlab_url, gitlab_token, gitlab_project, artifacts_job, pipeline_id):
+    """
+    Restore backup made by 'backup' command.
+    \t
+    Downloads job artifacts archive (backup of assets), extracts the archive
+    locally, uploads the content to Tower
+
+    \b
+    Folloving arguments can be passed via environment variables:
+        * GITLAB_URL
+        * GITLAB_TOKEN
+        * GITLAB_PROJECT
+        * ARTIFACTS_JOB
+    """
     # downloaded archive file path (artifacts.zip)
     dest_file_path = os.path.join(os.getcwd(), 'artifacts.zip')
 

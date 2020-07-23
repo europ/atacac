@@ -25,7 +25,7 @@ class CommandsLoader(click.MultiCommand):
         return importlib.import_module(f'atacac.{name}').main
 
 
-main = CommandsLoader()
+main = CommandsLoader(help='Ansible Tower Configuration As Code.')
 
 
 if __name__ == '__main__':

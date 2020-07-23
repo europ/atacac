@@ -9,6 +9,20 @@ from atacac._utils import log, tower_list, load_asset
 @click.argument('label_id', envvar='LABEL_ID')
 @click.argument('assets_glob', envvar='ASSETS_GLOB')
 def main(label_id, assets_glob):
+    """
+    Check for missing assets.
+    \f
+    Check if the repository's assets exits in Tower under a specific label and
+    vice versa.
+
+    !! ASSETS_GLOB must be in single quotes to prevent glob pattern expansion in
+    shell.
+
+    \b
+    Folloving arguments can be passed via environment variables:
+        * LABEL_ID
+        * ASSETS_GLOB
+    """
     # asset names in repository
     local_assets = []
     for file_name in sorted(glob.glob(assets_glob, recursive=True)):
