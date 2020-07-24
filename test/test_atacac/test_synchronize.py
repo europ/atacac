@@ -23,8 +23,8 @@ from atacac import synchronize
     ]
 )
 @mock.patch("atacac.synchronize.log")
-@mock.patch("atacac.synchronize.tower_list")
-def test_main(mock_tower_list, mock_log, assets_glob):
+@mock.patch("atacac.synchronize.tower_list_all")
+def test_main(mock_tower_list_all, mock_log, assets_glob):
     good_files = [assets_glob.replace("*", f"_{infix}_") for infix in ["F", "Z", "A", "M"]]
     wrong_files = ["file", ".file", "file.", "file.file"]
 
@@ -68,11 +68,11 @@ def test_main(mock_tower_list, mock_log, assets_glob):
     os.environ["ASSETS_GLOB"] = os.path.join(mock_dir.path, assets_glob)
     os.environ["LABEL_ID"] = "12345"
 
-    mock_tower_list.return_value = [
-        {"name": "ONE"},
-        {"name": "TWO"},
-        {"name": "TEN"},
-        {"name": "ELEVEN"}
+    mock_tower_list_all.return_value = [
+        {"type": "job_template", "name": "ONE"},
+        {"type": "job_template", "name": "TWO"},
+        {"type": "inventory", "name": "TEN"},
+        {"type": "project", "name": "ELEVEN"}
     ]
 
     runner = CliRunner()
@@ -93,4 +93,4 @@ def test_main(mock_tower_list, mock_log, assets_glob):
         "ERROR"  # abort message
     ])
 
-    mock_tower_list.assert_called_once()
+    mock_tower_list_all.assert_called_once()

@@ -96,6 +96,35 @@ def test_tower_list(mock_get_resource, error, asset_type, query):
         assert retval == result_assets
 
 
+@mock.patch("atacac._utils.tower_receive")
+@mock.patch("atacac._utils.tower_list")
+def test_tower_list_all(mock_tower_list, mock_tower_receive):
+    def tower_list(asset_type, query):
+        return [{'id': 1, 'name': f'Example {asset_type}'}]
+
+    mock_tower_list.side_effect = tower_list
+    mock_tower_receive.return_value = [
+        {
+            'project': 'Example project',
+            'inventory': 'Example inventory',
+        },
+    ]
+
+    result = _utils.tower_list_all([('label', 1)])
+
+    assert list(sorted(result, key=lambda i: i['name'])) == [
+        {'id': 1, 'type': 'inventory', 'name': 'Example inventory'},
+        {'id': 1, 'type': 'job_template', 'name': 'Example job_template'},
+        {'id': 1, 'type': 'project', 'name': 'Example project'},
+    ]
+
+    mock_tower_list.assert_has_calls([
+        mock.call('job_template', [('label', 1)]),
+        mock.call('project', [('name', 'Example project')]),
+        mock.call('inventory', [('name', 'Example inventory')]),
+    ])
+
+
 @pytest.mark.parametrize(
     "error, asset_type, asset_name",
     [

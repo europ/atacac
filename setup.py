@@ -20,6 +20,7 @@ setup(
         'yamale',
         'click<7.0',
         'yamllint',
+        'dogpile.cache',
     ],
     entry_points={
         'console_scripts': [

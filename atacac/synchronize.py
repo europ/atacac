@@ -2,7 +2,7 @@ import glob
 
 import click
 
-from atacac._utils import log, tower_list, load_asset
+from atacac._utils import log, tower_list_all, load_asset
 
 
 @click.command()
@@ -23,39 +23,37 @@ def main(label_id, assets_glob):
         * LABEL_ID
         * ASSETS_GLOB
     """
-    # asset names in repository
+    # list of asset type+name in repository
     local_assets = []
     for file_name in sorted(glob.glob(assets_glob, recursive=True)):
         asset = load_asset(file_name)
-        # Can synchronize only assets of type job_template because we are
-        # getting assets from tower by label. Label is not available on projects
-        # or inventories.
-        if asset['asset_type'] != 'job_template':
-            continue
-        local_assets.append(asset['name'])
+        local_assets.append((asset['asset_type'], asset['name']))
 
-    # asset names in tower
+    # list of asset type+name in tower
     tower_assets = [
-        item['name']
-        for item in tower_list('job_template', [('labels', label_id)])
+        (item['type'], item['name'])
+        for item in tower_list_all([('labels', label_id)])
     ]
 
     common_assets = set(tower_assets).intersection(set(local_assets))
 
-    for asset in common_assets:
-        log('INFO', f"'{asset}' located both in the repository and in the tower")
+    for asset_type, asset_name in common_assets:
+        log('INFO', (f"'{asset_name}' of type {asset_type} located both in the "
+                     "repository and in the tower"))
 
     # symmetric difference == disjunctive union == union without the intersection
     diff = set(tower_assets).symmetric_difference(set(local_assets))
 
     error = False
     for asset in diff:
+        asset_type, asset_name = asset
         if asset not in tower_assets:
-            log('WARNING', f"'{asset}' not found in tower ... will be recreated")
+            log('WARNING', (f"'{asset_name}' of type {asset_type} not found in "
+                            "tower ... will be recreated"))
         elif asset not in local_assets:
             error = True
-            log('ERROR', (f"'{asset}' not found in repository ... will be reported "
-                          "(not allowed)"))
+            log('ERROR', (f"'{asset_name}' of type {asset_type} not found in "
+                          "repository ... will be reported (not allowed)"))
 
     if error:
         log('INFO', (

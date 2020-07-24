@@ -14,6 +14,7 @@ from tower_cli.cli.transfer.send import Sender
 from tower_cli.cli.transfer.receive import Receiver
 from tower_cli.cli.transfer.common import SEND_ORDER as ASSET_TYPES
 import yaml
+from dogpile.cache import make_region
 
 
 LOG_COLORS = {
@@ -22,6 +23,11 @@ LOG_COLORS = {
     'WARNING': 'yellow',
     'ERROR': 'red',
 }
+
+
+cache = make_region().configure(
+    'dogpile.cache.memory'
+)
 
 
 class Error(Exception):
@@ -51,6 +57,7 @@ def log(level, message, fatal=False):
         raise click.Abort
 
 
+@cache.cache_on_arguments()
 def tower_list(asset_type, query):
     """
     List all assets of certain type in Tower.
@@ -78,6 +85,34 @@ def tower_list(asset_type, query):
     ]
 
 
+@cache.cache_on_arguments()
+def tower_list_all(query):
+    """
+    Find all assets including dependencies; job templates with provided label_id
+    and related projects and inventories.
+
+    Arguments:
+        label_id -- label ID
+
+    Returns:
+        list of assets as a dict {id: ..., type: ..., name: ...}
+    """
+    dependencies_types = ['project', 'inventory']
+    # set of tuple(type, id, name)
+    assets_set = set()
+
+    for item in tower_list('job_template', query):
+        assets_set.add(('job_template', item['id'], item['name']))
+
+        for asset_data in tower_receive('job_template', item['name']):
+            for dep_type in dependencies_types:
+                for dep_data in tower_list(dep_type, [('name', asset_data[dep_type])]):
+                    assets_set.add((dep_type, dep_data['id'], dep_data['name']))
+
+    return [{'id': id, 'type': type, 'name': name} for type, id, name in assets_set]
+
+
+@cache.cache_on_arguments()
 def tower_receive(asset_type, asset_name):
     """
     Receive assets from Tower
