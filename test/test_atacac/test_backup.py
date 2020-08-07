@@ -7,7 +7,7 @@ import yaml
 import pytest
 from click.testing import CliRunner
 
-from atacac import backup
+from atacac import backup, _utils
 
 
 def test_Dumper_increase_indent():
@@ -101,6 +101,7 @@ def test_main(mock_tower_receive, mock_load_asset, mock_log, assets_glob):
     }
     mock_tower_receive.side_effect = lambda asset_type, asset_name: [{
         "name": f"TOWERRECEIVE {asset_name}",
+        "asset_type": "job_template",
         "note": "return value of tower_receive"
     }]
 
@@ -125,8 +126,9 @@ def test_main(mock_tower_receive, mock_load_asset, mock_log, assets_glob):
         (call.args[0], call.args[1]) for call in mock_tower_receive.call_args_list
     ])
 
-    file_name_path = mock_dir.path.replace("/", "-").replace(" ", "_")
     assert sorted(os.listdir(mock_dir_backup.path)) == sorted([
-        f"TOWERRECEIVE_LOADASSET_{file_name_path}-{file_name}.yml"
+        _utils.sanitize_filename(
+            f"TOWERRECEIVE_LOADASSET_{mock_dir.path}_{file_name}.job_template.yml"
+        )
         for file_name in sorted(good_files)
     ])

@@ -211,3 +211,18 @@ def test_load_asset_invalid_path():
     except _utils.Error as e:
         assert re.match(r"^Failed to read content of '\./a/b/c/d/e/f/g/h/i/file'$", str(e))
         assert e.error_code == 1
+
+
+@pytest.mark.parametrize(
+    "value, sanitized",
+    [
+        pytest.param('foo_bar.yml', 'foo_bar.yml'),
+        pytest.param('foo/bar.yml', 'foo_bar.yml'),
+        pytest.param('foo///bar.yml', 'foo_bar.yml'),
+        pytest.param('foo.bar.yml', 'foo.bar.yml'),
+        pytest.param('foo-bar.yml', 'foo-bar.yml'),
+        pytest.param('foo bar baz foo bar.job.yml', 'foo_bar_baz_foo_bar.job.yml'),
+    ]
+)
+def test_sanitize(value, sanitized):
+    assert _utils.sanitize_filename(value) == sanitized

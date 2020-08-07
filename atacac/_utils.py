@@ -7,6 +7,7 @@ __all__ = [
 
 import json
 import textwrap
+import re
 
 import click
 import tower_cli
@@ -161,3 +162,13 @@ def load_asset(file_path):
             return yaml.safe_load(f)
     except IOError:
         raise Error(f"Failed to read content of '{file_path}'")
+
+
+def sanitize_filename(filename):
+    """
+    Sanitize filename so it contains only alphanumeric characters, dot,
+    underscore or dash. All other characters are replaced with single
+    underscore and multiple consecutive uderscores is collapsed into one (eg.
+    `a_%$#@_b` -> `a_b`).
+    """
+    return re.sub(r'[^a-zA-Z0-9.-]+', '_', filename)

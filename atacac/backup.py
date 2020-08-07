@@ -5,7 +5,7 @@ import yaml
 import click
 from tower_cli.exceptions import TowerCLIError
 
-from atacac._utils import log, load_asset, tower_receive
+from atacac._utils import log, load_asset, tower_receive, sanitize_filename
 
 
 class Dumper(yaml.Dumper):
@@ -49,7 +49,7 @@ def main(destination, assets_glob):
 
         file_path = os.path.join(
             destination,
-            asset_data['name'].replace('/', '-').replace(' ', '_') + '.yml'
+            sanitize_filename(f'{asset_data["name"]}.{asset_data["asset_type"]}.yml')
         )
 
         file_content = yaml.dump(asset_data, Dumper=Dumper, default_flow_style=False)
