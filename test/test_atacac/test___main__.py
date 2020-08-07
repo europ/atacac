@@ -15,7 +15,8 @@ def test_CommandsLoader_list_commands():
         "restore",
         "synchronize",
         "upload",
-        "validate"
+        "validate",
+        "download",
     ]
 
 

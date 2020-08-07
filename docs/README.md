@@ -65,7 +65,7 @@
       [variable of type
       File](https://docs.gitlab.com/ee/ci/variables/#custom-environment-variables-of-type-file)
 1. Add assets (YAML files) to the repository (folder, eg. `data/assets/`)
-    * You can download the already existing ones with `atacac backup <LABEL_ID> 'data/assets/*.yml'`
+    * You can download the already existing ones with `atacac download <LABEL_ID> data/assets`
 1. Configure the validation schema stored in `data/schemas/`
     * You can check asset validating schema locally via `atacac validate 'data/assets/*_<type>.yml' 'data/schemas/<type>.yml'`
     * This step is optional. If you don't need additional assurance that assets are correct you can skip this and remove `validation` job from the pipeline.
@@ -145,9 +145,14 @@ The repository must include runner, assets in `data/assets/` folder, credentials
 * backup
     * `atacac backup`
     * download and store the files to the given folder from Ansible Tower (defined in `atacac/backup.py`)
+    * downloads only assets that are stored locally - makes backup
 * uploading
     * `atacac upload`
     * rewrite the corresponding Ansible Tower assets with repository assets
+* downloading
+    * `atacac download`
+    * download all assets including dependencies with given label
+    * downloads all assets - for initial download to the repository
 
 The automated workflow does not restore the backup stored in the job's artifacts. Each pipeline run stores the actual assets located in the Ansible Tower into a [job artifact](https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html) (in our case called backup) before it will write (upload) anything to the Ansible Tower. This artifact is an archive including the actual assets that are downloaded. If something went wrong, there is a possibility to turn in back by doing a backup restore via [`restore`](ratacac/estore.py), which must be done manually.
 

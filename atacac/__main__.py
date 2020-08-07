@@ -10,6 +10,7 @@ COMMANDS = [
     'synchronize',
     'upload',
     'validate',
+    'download',
 ]
 
 
