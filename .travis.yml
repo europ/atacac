@@ -13,8 +13,8 @@ matrix:
       script:
         - >
           docker run --rm -i
-          -v ${PWD}/.conf/hadolint.yaml:/conf/hadolint.yaml:Z
-          -e XDG_CONFIG_HOME=/conf hadolint/hadolint
+          -v ${PWD}/.conf/hadolint.yaml:/root/.config/hadolint.yaml
+          hadolint/hadolint
           < Dockerfile
 
     - name: Linter-Markdown (markdownlint)
