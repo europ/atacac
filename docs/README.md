@@ -2,8 +2,8 @@
 
 ## Introduction
 
-The project was designed to work from GitLab CI, however all the steps in the workflow are wrapped in tox, so you can use your
-own CI/CD framework to define the individual steps.
+The project was designed to work from GitLab CI, however all the steps in the workflow are wrapped
+in a standalone script or container, so you can use your own CI/CD framework to define the individual steps.
 
 You can have a look at our example [.gitlab-ci.yml](../example/.gitlab-ci.yml).
 
